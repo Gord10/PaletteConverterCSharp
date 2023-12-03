@@ -1,10 +1,13 @@
 # PaletteConverterCSharp
 You can get the color palette of an image with this program, and then apply this palette to another image easily.
 ![example_c64](https://github.com/Gord10/PaletteConverterCSharp/assets/9501683/13839c71-6551-4c71-bdc7-29b4fa4f888a)
-Before
+
+Original
 
 ![example_c64_converted](https://github.com/Gord10/PaletteConverterCSharp/assets/9501683/32dea220-5be6-426d-a74a-cd54e830c7ef)
-After using NES palette
+
+After converting to [NES palette](https://en.wikipedia.org/wiki/File:NES_palette_sample_image.png)
+Note that this program is able to create palette files simply by reading reference images
 
 # How to use?
 1. Drag the image whose palette you want to extract on PaletteConverter.exe. (example_NES.png, for example).
