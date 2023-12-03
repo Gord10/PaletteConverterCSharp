@@ -22,7 +22,7 @@ class Sample
     //Examples: player.png will be converted as player_converted.png, if user is converting a single image. "/Sprites/" folder will be "/Sprites_converted/", if user is converting whole png images in a folder.
     static readonly string CONVERTED_NAME_POSTFIX = "_converted";
 
-    static System.Drawing.Imaging.PixelFormat PIXEL_FORMAT = System.Drawing.Imaging.PixelFormat.Format32bppPArgb;
+    static System.Drawing.Imaging.PixelFormat PIXEL_FORMAT = System.Drawing.Imaging.PixelFormat.Format32bppArgb;
 
     static void Main(string[] args)
     {
@@ -194,7 +194,7 @@ class Sample
             for (int j = 0; j < referenceImage.Height; j++)
             {
                 Color pixel = referenceImage.GetPixel(i, j);
-                if (!colorsInPalette.Contains(pixel)) //Ignore the transparent pixels
+                if (!colorsInPalette.Contains(pixel) && pixel.A != 0) //Ignore the transparent pixels
                 {
                     colorsInPalette.Add(pixel);
                 }
@@ -212,7 +212,7 @@ class Sample
         //Creates the png that consists of the unique colors
         Bitmap paletteImage = new Bitmap(colorsInPalette.Count, 1, PIXEL_FORMAT);
 
-        for (int i = 0; i < colorsInPalette.Count - 1; i++)
+        for (int i = 0; i < colorsInPalette.Count; i++)
         {
             paletteImage.SetPixel(i, 0, colorsInPalette[i]);
         }
@@ -235,22 +235,21 @@ class Sample
     //Converts the colors of the image to closest colors in the palette, then creates an image
     static void ConvertImage(string imageToConvertFilePath, string outputImageFilePath, List<Color> palette, bool willOpenConvertedFile)
     {
+        if (palette.Count == 0)
+        {
+            Console.WriteLine("Invalid palette. Halting...");
+            return;
+        }
+
         Bitmap imgOriginal = GetBitmapFromFile(imageToConvertFilePath);
         if(imgOriginal == null)
         {
             Console.WriteLine("Halting...");
-            return;
-        }
-
-        Bitmap imgConverted = new Bitmap(imgOriginal);
-
-        if(palette.Count == 0)
-        {
-            Console.WriteLine("Halting");
             imgOriginal.Dispose();
-            imgConverted.Dispose();
             return;
         }
+
+        Bitmap imgConverted = new Bitmap(imgOriginal.Width, imgOriginal.Height, PIXEL_FORMAT);
 
         int i, j;
         for (i = 0; i < imgOriginal.Width;i++)
@@ -297,7 +296,7 @@ class Sample
         {
             return Color.Transparent;
         }
-
+        
         int i;
         int minDistance = int.MaxValue;
         Color closestColor = Color.White;
@@ -319,14 +318,13 @@ class Sample
     static List<Color> GetPaletteFromFile(string paletteFileName)
     {
         Bitmap paletteImage;
+        paletteImage = GetBitmapFromFile(paletteFileName);
+
         List<Color> palette = new();
-        try
+
+        if (paletteImage == null)
         {
-            paletteImage = new(paletteFileName);
-        }
-        catch(Exception ex)
-        {
-            Console.WriteLine("Are you sure " + paletteFileName + " exists? You need a palette first.");
+            Console.WriteLine(paletteFileName + " is not found");
             return palette;
         }
 
