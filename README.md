@@ -17,5 +17,5 @@ Note that this program is able to create palette files simply by reading referen
 
 Alternatively, you can drag folder(s) to the exe to convert multiple images according to the palette you created in prior.
 
-#Dependencies
+# Dependencies
 .NET 6.0
